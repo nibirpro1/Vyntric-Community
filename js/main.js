@@ -669,7 +669,7 @@ const GOOGLE_CLIENT_ID = "576079870515-rkng4d88k0kplvu070osjn70c6vglfig.apps.goo
             entry.target.classList.add('visible');
           }
         });
-      }, { threshold: 0.1 });
+      }, { threshold: 0.05, rootMargin: '120px 0px' });
       revealElems.forEach(el => observer.observe(el));
     } else {
       revealElems.forEach(el => el.classList.add('visible'));
