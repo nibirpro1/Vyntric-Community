@@ -761,11 +761,24 @@ const GOOGLE_CLIENT_ID = "576079870515-rkng4d88k0kplvu070osjn70c6vglfig.apps.goo
   let isEntranceGateActive = false;
 
   function clearAuthInputs() {
+    const signInForm = document.getElementById('signInForm');
+    const signUpForm = document.getElementById('signUpForm');
+    const authUsernameInput = document.getElementById('authUsernameInput');
+    const authPasswordInput = document.getElementById('authPasswordInput');
+    const signUpIgnInput = document.getElementById('signUpIgnInput');
+    const signUpEmailInput = document.getElementById('signUpEmailInput');
+    const signUpPasswordInput = document.getElementById('signUpPasswordInput');
+    const signUpAvatarPreview = document.getElementById('signUpAvatarPreview');
+
     if (authUsernameInput) authUsernameInput.value = '';
     if (authPasswordInput) authPasswordInput.value = '';
-    if (authForm) {
-      try { authForm.reset(); } catch(e) {}
-    }
+    if (signUpIgnInput) signUpIgnInput.value = '';
+    if (signUpEmailInput) signUpEmailInput.value = '';
+    if (signUpPasswordInput) signUpPasswordInput.value = '';
+    if (signUpAvatarPreview) signUpAvatarPreview.src = 'https://mc-heads.net/avatar/Steve/32';
+
+    if (signInForm) { try { signInForm.reset(); } catch(e) {} }
+    if (signUpForm) { try { signUpForm.reset(); } catch(e) {} }
   }
 
   function openAuthModal(isForced = false) {
@@ -773,28 +786,27 @@ const GOOGLE_CLIENT_ID = "576079870515-rkng4d88k0kplvu070osjn70c6vglfig.apps.goo
     const hasUser = !!localStorage.getItem('vyntric_user');
     isEntranceGateActive = isForced || !hasUser;
 
+    const tabSignIn = document.getElementById('tabSignIn');
+    if (tabSignIn) tabSignIn.click();
+
     if (authModal) {
       authModal.classList.add('open');
       document.body.style.overflow = 'hidden';
     }
 
     if (authCloseBtn) {
-      // Hide close button if user is not logged in!
-      authCloseBtn.style.display = isEntranceGateActive ? 'none' : 'flex';
+      authCloseBtn.style.display = 'flex';
     }
   }
 
   function closeAuthModal() {
-    // If not logged in and on a public page, DO NOT allow closing without login!
-    if (!window.location.pathname.includes('admin.html') && !localStorage.getItem('vyntric_user')) {
-      if (window.showToast) window.showToast('⚠️ Please sign in to enter Vyntric Community!');
-      return;
-    }
-
     isEntranceGateActive = false;
     if (authModal) authModal.classList.remove('open');
     document.body.style.overflow = '';
   }
+
+  window.openAuthModal = openAuthModal;
+  window.closeAuthModal = closeAuthModal;
 
   window.checkSiteEntranceAuth = function() {
     if (window.location.pathname.includes('admin.html')) return;
@@ -1452,53 +1464,128 @@ const GOOGLE_CLIENT_ID = "576079870515-rkng4d88k0kplvu070osjn70c6vglfig.apps.goo
     const tabSignIn = document.getElementById('tabSignIn');
     const tabSignUp = document.getElementById('tabSignUp');
     const authTitle = document.getElementById('authTitle');
-    const authSubmitBtn = document.getElementById('authSubmitBtn');
-    const passwordEyeBtn = document.getElementById('passwordEyeBtn');
-    const authUsernameInput = document.getElementById('authUsernameInput');
-    const authPasswordInput = document.getElementById('authPasswordInput');
-    const authForm = document.getElementById('authForm');
-    let isSignUp = false;
+    const authDesc = document.getElementById('authDesc');
+    const googleBtnText = document.getElementById('googleBtnText');
+    const dividerText = document.getElementById('dividerText');
+    const signInForm = document.getElementById('signInForm');
+    const signUpForm = document.getElementById('signUpForm');
+    const authGoToSignUp = document.getElementById('authGoToSignUp');
+    const authGoToSignIn = document.getElementById('authGoToSignIn');
+    const authForgotBtn = document.getElementById('authForgotBtn');
 
-    if (tabSignIn && tabSignUp) {
-      tabSignIn.addEventListener('click', (e) => {
-        e.preventDefault();
-        isSignUp = false;
+    // Switch to Sign In
+    function setSignInView() {
+      if (tabSignIn) {
         tabSignIn.classList.add('active');
+        tabSignIn.setAttribute('aria-selected', 'true');
+      }
+      if (tabSignUp) {
         tabSignUp.classList.remove('active');
-        if (authTitle) authTitle.textContent = 'Member Sign In';
-        if (authSubmitBtn) authSubmitBtn.textContent = 'Sign In →';
-        if (authUsernameInput) authUsernameInput.placeholder = 'VyntricPlayer or name@gmail.com';
-      });
-
-      tabSignUp.addEventListener('click', (e) => {
-        e.preventDefault();
-        isSignUp = true;
-        tabSignUp.classList.add('active');
-        tabSignIn.classList.remove('active');
-        if (authTitle) authTitle.textContent = 'Create Vyntric Account';
-        if (authSubmitBtn) authSubmitBtn.textContent = 'Create & Whitelist →';
-        if (authUsernameInput) authUsernameInput.placeholder = 'Enter Minecraft Username (IGN)';
-      });
+        tabSignUp.setAttribute('aria-selected', 'false');
+      }
+      if (signInForm) signInForm.style.display = 'flex';
+      if (signUpForm) signUpForm.style.display = 'none';
+      if (authTitle) authTitle.textContent = 'Welcome Back';
+      if (authDesc) authDesc.textContent = 'Sign in to sync your Minecraft IGN and access SMP Season 1.';
+      if (googleBtnText) googleBtnText.textContent = 'Continue with Google';
+      if (dividerText) dividerText.textContent = 'OR WITH CREDENTIALS';
     }
 
+    // Switch to Sign Up
+    function setSignUpView() {
+      if (tabSignUp) {
+        tabSignUp.classList.add('active');
+        tabSignUp.setAttribute('aria-selected', 'true');
+      }
+      if (tabSignIn) {
+        tabSignIn.classList.remove('active');
+        tabSignIn.setAttribute('aria-selected', 'false');
+      }
+      if (signUpForm) signUpForm.style.display = 'flex';
+      if (signInForm) signInForm.style.display = 'none';
+      if (authTitle) authTitle.textContent = 'Create Account';
+      if (authDesc) authDesc.textContent = 'Create your Vyntric ID to whitelist your IGN for upcoming realms.';
+      if (googleBtnText) googleBtnText.textContent = 'Sign Up with Google';
+      if (dividerText) dividerText.textContent = 'OR CREATE WITH EMAIL';
+    }
+
+    if (tabSignIn) tabSignIn.addEventListener('click', (e) => { e.preventDefault(); setSignInView(); });
+    if (tabSignUp) tabSignUp.addEventListener('click', (e) => { e.preventDefault(); setSignUpView(); });
+    if (authGoToSignUp) authGoToSignUp.addEventListener('click', (e) => { e.preventDefault(); setSignUpView(); });
+    if (authGoToSignIn) authGoToSignIn.addEventListener('click', (e) => { e.preventDefault(); setSignInView(); });
+
+    // Eye toggle for Sign In password
+    const passwordEyeBtn = document.getElementById('passwordEyeBtn');
+    const authPasswordInput = document.getElementById('authPasswordInput');
     if (passwordEyeBtn && authPasswordInput) {
       passwordEyeBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        if (authPasswordInput.type === 'password') {
-          authPasswordInput.type = 'text';
-          passwordEyeBtn.textContent = '🔒';
+        const isPass = authPasswordInput.type === 'password';
+        authPasswordInput.type = isPass ? 'text' : 'password';
+        passwordEyeBtn.innerHTML = isPass
+          ? `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`
+          : `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+      });
+    }
+
+    // Eye toggle for Sign Up password
+    const signUpPasswordEyeBtn = document.getElementById('signUpPasswordEyeBtn');
+    const signUpPasswordInput = document.getElementById('signUpPasswordInput');
+    if (signUpPasswordEyeBtn && signUpPasswordInput) {
+      signUpPasswordEyeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isPass = signUpPasswordInput.type === 'password';
+        signUpPasswordInput.type = isPass ? 'text' : 'password';
+        signUpPasswordEyeBtn.innerHTML = isPass
+          ? `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`
+          : `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+      });
+    }
+
+    // Live Minecraft Avatar Face Preview on IGN typing
+    const signUpIgnInput = document.getElementById('signUpIgnInput');
+    const signUpAvatarPreview = document.getElementById('signUpAvatarPreview');
+    if (signUpIgnInput && signUpAvatarPreview) {
+      signUpIgnInput.addEventListener('input', (e) => {
+        const val = e.target.value.trim();
+        const ign = val.length > 0 ? val : 'Steve';
+        signUpAvatarPreview.src = `https://mc-heads.net/avatar/${encodeURIComponent(ign)}/32`;
+      });
+    }
+
+    // Forgot Password
+    if (authForgotBtn) {
+      authForgotBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (window.showToast) {
+          window.showToast('💡 Need a reset? Message an Admin in Discord: discord.gg/pvMkkZKKC4');
         } else {
-          authPasswordInput.type = 'password';
-          passwordEyeBtn.textContent = '👁️';
+          alert('To reset your credentials, please contact server admins on Discord: discord.gg/pvMkkZKKC4');
         }
       });
     }
 
-    function doSubmit(e) {
+    // Sign In Submit
+    function handleSignInSubmit(e) {
       if (e) e.preventDefault();
-      const raw = authUsernameInput ? authUsernameInput.value.trim() : '';
-      const name = raw || (isSignUp ? 'Steve' : 'VyntricPlayer');
-      const email = name.includes('@') ? name : `${name.toLowerCase()}@gmail.com`;
+      const authUsernameInput = document.getElementById('authUsernameInput');
+      const authPasswordInput = document.getElementById('authPasswordInput');
+      const val = authUsernameInput ? authUsernameInput.value.trim() : '';
+      const pass = authPasswordInput ? authPasswordInput.value.trim() : '';
+
+      if (!val) {
+        if (window.showToast) window.showToast('⚠️ Please enter your username or email');
+        if (authUsernameInput) authUsernameInput.focus();
+        return;
+      }
+      if (!pass) {
+        if (window.showToast) window.showToast('⚠️ Please enter your password');
+        if (authPasswordInput) authPasswordInput.focus();
+        return;
+      }
+
+      const email = val.includes('@') ? val : `${val.toLowerCase()}@gmail.com`;
+      const name = val.includes('@') ? val.split('@')[0] : val;
 
       if (email.includes('@') && typeof window.addVerifiedGmail === 'function') {
         window.addVerifiedGmail(email, name);
@@ -1512,23 +1599,68 @@ const GOOGLE_CLIENT_ID = "576079870515-rkng4d88k0kplvu070osjn70c6vglfig.apps.goo
         sub: 'user_' + Date.now()
       };
       applyUserLogin(user, true);
-
-      if (isSignUp) {
-        showToast(`✓ Account created & Whitelisted: ${name}!`);
-      } else {
-        showToast(`✓ Welcome back, ${name}!`);
-      }
+      showToast(`✓ Welcome back, ${name}!`);
     }
 
-    if (authForm) authForm.addEventListener('submit', doSubmit);
-    if (authSubmitBtn) authSubmitBtn.addEventListener('click', doSubmit);
+    const authSignInSubmitBtn = document.getElementById('authSignInSubmitBtn');
+    if (signInForm) signInForm.addEventListener('submit', handleSignInSubmit);
+    if (authSignInSubmitBtn) authSignInSubmitBtn.addEventListener('click', handleSignInSubmit);
+
+    // Sign Up Submit
+    function handleSignUpSubmit(e) {
+      if (e) e.preventDefault();
+      const signUpIgnInput = document.getElementById('signUpIgnInput');
+      const signUpEmailInput = document.getElementById('signUpEmailInput');
+      const signUpPasswordInput = document.getElementById('signUpPasswordInput');
+      const signUpAgreeCheckbox = document.getElementById('signUpAgreeCheckbox');
+
+      const ign = signUpIgnInput ? signUpIgnInput.value.trim() : '';
+      const email = signUpEmailInput ? signUpEmailInput.value.trim() : '';
+      const pass = signUpPasswordInput ? signUpPasswordInput.value.trim() : '';
+
+      if (!ign || ign.length < 2) {
+        if (window.showToast) window.showToast('⚠️ Please enter a valid Minecraft IGN (min 2 chars)');
+        if (signUpIgnInput) signUpIgnInput.focus();
+        return;
+      }
+      if (!email || !email.includes('@')) {
+        if (window.showToast) window.showToast('⚠️ Please enter a valid email address');
+        if (signUpEmailInput) signUpEmailInput.focus();
+        return;
+      }
+      if (!pass || pass.length < 6) {
+        if (window.showToast) window.showToast('⚠️ Password must be at least 6 characters');
+        if (signUpPasswordInput) signUpPasswordInput.focus();
+        return;
+      }
+      if (signUpAgreeCheckbox && !signUpAgreeCheckbox.checked) {
+        if (window.showToast) window.showToast('⚠️ You must agree to Vyntric SMP Rules');
+        return;
+      }
+
+      if (typeof window.addVerifiedGmail === 'function') {
+        window.addVerifiedGmail(email, ign);
+      }
+
+      localStorage.setItem('vyntric_mc_ign', ign);
+      const user = {
+        name: ign,
+        email: email,
+        picture: `https://mc-heads.net/avatar/${encodeURIComponent(ign)}/64`,
+        sub: 'user_' + Date.now()
+      };
+      applyUserLogin(user, true);
+      showToast(`✓ Welcome to Vyntric! IGN Whitelisted: ${ign}`);
+    }
+
+    const authSignUpSubmitBtn = document.getElementById('authSignUpSubmitBtn');
+    if (signUpForm) signUpForm.addEventListener('submit', handleSignUpSubmit);
+    if (authSignUpSubmitBtn) authSignUpSubmitBtn.addEventListener('click', handleSignUpSubmit);
   }
 
   // Initialize event bindings for auth modal
   bindAuthModalEvents();
-
-
-  // ==========================================================================
+// ==========================================================================
   // 8. RENDER SQUAD MEMBERS (COMPETITIVE ROSTER, TIERS & BREAKDOWN MODAL)
   // ==========================================================================
   let currentRosterFilter = 'ALL';
