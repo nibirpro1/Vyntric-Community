@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Staff Admin & Roster Permissions — Vyntric SMP</title>
+  <meta name="description" content="Manage Vyntric Core Squad members, Google Gmail assignments, and tier/skin permissions.">
+  <meta name="theme-color" content="#06020c">
+  <link rel="icon" type="image/png" href="/assets/vyntric_mark_cropped.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+  
+  <!-- Central Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    .admin-main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 6rem 1.5rem 4rem;
+      min-height: 85vh;
+      position: relative;
+      z-index: 10;
+    }
+    .admin-header-card {
+      background: rgba(18, 10, 32, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid rgba(168, 85, 247, 0.45);
+      border-radius: 18px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .admin-title-wrap h1 {
+      font-family: var(--font-display);
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .admin-stats-row {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .admin-stat-card {
+      flex: 1;
+      min-width: 220px;
+      background: #140a24;
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+    }
+    .admin-stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #c084fc;
+      font-family: var(--font-display);
+    }
+    .admin-stat-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.25rem;
+    }
+    .admin-table-card {
+      background: #0d0617;
+      border: 1.5px solid rgba(168, 85, 247, 0.4);
+      border-radius: 18px;
+      padding: 2rem;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95);
+      overflow-x: auto;
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .admin-table th {
+      padding: 1rem 1.25rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .admin-table td {
+      padding: 1.15rem 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      vertical-align: middle;
+      font-size: 0.9rem;
+    }
+    .admin-table tr:hover td {
+      background: rgba(168, 85, 247, 0.08);
+    }
+    .table-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(168, 85, 247, 0.25);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .table-avatar img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+    .table-input {
+      background: #180c2e;
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.88rem;
+      width: 100%;
+      min-width: 130px;
+      outline: none;
+      transition: var(--transition);
+    }
+    .table-input:focus {
+      border-color: #c084fc;
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
+    }
+    .perm-toggle-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .perm-checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      cursor: pointer;
+      user-select: none;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.3rem 0.55rem;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .perm-checkbox-label input[type="checkbox"] {
+      accent-color: #a855f7;
+      cursor: pointer;
+    }
+    .perm-checkbox-label:hover {
+      background: rgba(168, 85, 247, 0.15);
+      border-color: rgba(168, 85, 247, 0.4);
+    }
+    .admin-action-btn {
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn-save-row {
+      background: #059669;
+      color: #fff;
+    }
+    .btn-save-row:hover {
+      background: #10b981;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+    .btn-test-login {
+      background: rgba(168, 85, 247, 0.2);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      color: #d8b4fe;
+    }
+    .btn-test-login:hover {
+      background: #9333ea;
+      color: #fff;
+    }
+    .btn-delete-row {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+    .btn-delete-row:hover {
+      background: #ef4444;
+      color: #fff;
+    }
+    /* Auth Gate Screen */
+    .admin-lock-screen {
+      max-width: 480px;
+      margin: 4.5rem auto;
+      background: rgba(18, 8, 32, 0.96);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.25) 0%, transparent 60%),
+        linear-gradient(rgba(168, 85, 247, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168, 85, 247, 0.12) 1px, transparent 1px);
+      background-size: 100% 100%, 24px 24px, 24px 24px;
+      border: 2px solid rgba(168, 85, 247, 0.65);
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      text-align: center;
+      box-shadow: 0 0 50px rgba(168, 85, 247, 0.35), 0 30px 90px rgba(0, 0, 0, 0.98);
+      position: relative;
+      z-index: 10;
+    }
+    .admin-lock-crest {
+      width: 76px;
+      height: 76px;
+      border-radius: 20px;
+      background: radial-gradient(circle at 50% 35%, #5a0916 0%, #29040a 70%, #0d0104 100%);
+      border: 2.5px solid #ef4444;
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.35rem;
+    }
+    .admin-lock-crest img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Particles Canvas -->
+  <canvas id="particlesCanvas"></canvas>
+
+  <!-- Ambient Video Trailer Background -->
+  <div class="trailer-bg-container" aria-hidden="true">
+    <video class="trailer-video" id="minecraftTrailerVideo" autoplay loop muted playsinline preload="auto">
+      <source src="/assets/minecraft_trailer.mp4" type="video/mp4">
+      <source src="/assets/minecraft_trailer.webm" type="video/webm">
+    </video>
+    <div class="trailer-vignette"></div>
+  </div>
+
+  <!-- Background Music Element -->
+  <audio id="minecraftBgm" loop preload="auto">
+    <source src="/assets/audio/sweden.mp3" type="audio/mpeg">
+    <source src="/assets/audio/wet_hands.mp3" type="audio/mpeg">
+    <source src="/assets/audio/subwoofer_lullaby.mp3" type="audio/mpeg">
+    <source src="/assets/audio/haggstrom.mp3" type="audio/mpeg">
+    <source src="/assets/audio/pigstep.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Top Header -->
+  <header class="site-header" id="siteHeader">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo-wrap" aria-label="Vyntric Home">
+        <div class="brand-mark-box">
+          <img src="/assets/vyntric_mark_cropped.png" alt="Vyntric Emblem" onerror="this.onerror=null;this.src='/assets/vyntric_mark.png'">
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-name">VYNTRIC</span>
+          <span class="brand-sub">STAFF • ADMIN • CONSOLE</span>
+        </div>
+      </a>
+
+      <nav class="nav-menu-capsule" aria-label="Main Navigation">
+        <a href="index.html" class="nav-pill-link">Home</a>
+        <a href="about.html" class="nav-pill-link">About</a>
+        <a href="squad.html" class="nav-pill-link">Squad</a>
+        <a href="server.html" class="nav-pill-link">Server IP</a>
+        <a href="faq.html" class="nav-pill-link">FAQ</a>
+        <a href="community.html" class="nav-pill-link">Community</a>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Sound Capsule -->
+        <div class="sound-pod-capsule" title="Toggle Sound">
+          <button class="sound-btn" id="sfxToggleBtn" aria-label="Toggle Sound">
+            <span id="sfxIcon">&#128263;</span>
+            <span id="sfxText">SOUND: OFF</span>
+          </button>
+          <div class="equalizer-bars" id="equalizerBars">
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+          </div>
+          <input type="range" class="volume-slider" id="bgmVolumeSlider" min="0" max="100" value="0" aria-label="Audio Volume">
+        </div>
+
+        <a href="squad.html" class="btn btn-purple btn-sm">
+          <span>&larr; View Live Squad</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-main-container">
+
+    <!-- Screen 1: Admin Passcode Gate (If not logged in) -->
+    <div id="adminLockScreen" class="admin-lock-screen">
+      <div class="admin-lock-crest">
+        <img src="/assets/vyntric_mark_cropped.png" alt="Vyntric Crest">
+      </div>
+      <div class="auth-eyebrow" style="color: #c084fc; font-weight: 800; letter-spacing: 0.12em; text-shadow: 0 0 10px rgba(192, 132, 252, 0.5);">
+        SERVER OWNER PORTAL
+      </div>
+      <h2 style="font-family: var(--font-display); font-size: 2rem; font-weight: 800; color: #ffffff; margin-top: 0.35rem; margin-bottom: 0.65rem; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);">
+        Staff Console Lock
+      </h2>
+      <p style="font-size: 0.92rem; color: #cbd5e1; line-height: 1.55; margin-bottom: 1.85rem;">
+        Enter Server Owner passcode to manage live website settings, Google member permissions, and server connection info.
+      </p>
+
+      <form id="adminPassForm" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 1.15rem;">
+        <div class="auth-field-group" style="text-align: left;">
+          <div style="margin-bottom: 0.4rem;">
+            <label class="auth-label" for="adminPassInput" style="color: #f1f5f9; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.05em;">
+              OWNER PASSCODE <span style="color: #ef4444;">*</span>
+            </label>
+          </div>
+          <div class="auth-input-wrapper" style="position: relative;">
+            <span class="auth-input-icon" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-size: 1.1rem; color: #c084fc;">🔒</span>
+            <input type="password" class="auth-input" id="adminPassInput" placeholder="••••••••••••" autocomplete="off" style="background: #090312; border: 1.5px solid rgba(168, 85, 247, 0.6); color: #ffffff; font-size: 1rem; padding: 0.9rem 2.8rem 0.9rem 2.85rem; border-radius: 10px; width: 100%; box-shadow: inset 0 2px 6px rgba(0,0,0,0.7); outline: none;">
+            <button type="button" id="adminTogglePassBtn" style="position: absolute; right: 0.85rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem;" title="Show/Hide Password">👁️</button>
+          </div>
+        </div>
+
+        <button type="submit" class="auth-submit-btn" id="adminUnlockBtn" style="margin-top: 0.4rem; background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%); color: #ffffff; font-size: 1rem; font-weight: 800; letter-spacing: 0.06em; padding: 0.95rem; border-radius: 12px; border: 1px solid #f87171; box-shadow: 0 0 25px rgba(239, 68, 68, 0.65), 0 4px 15px rgba(0, 0, 0, 0.5); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
+          🔓 Unlock Staff Console &rarr;
+        </button>
+      </form>
+    </div>
+    <!-- Screen 2: Staff Management Dashboard (When unlocked) -->
+    <div id="adminDashboard" style="display: none;">
+      
+      <!-- Top Title Bar -->
+      <div class="admin-header-card">
+        <div class="admin-title-wrap">
+          <div class="auth-eyebrow">SERVER OWNER CONTROL</div>
+          <h1>🛡️ Vyntric Community &amp; Server Command Center</h1>
+          <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 0.35rem;">
+            Full live control over server connection info, top announcements, member permissions, Google accounts, and access policies.
+          </p>
+        </div>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <a href="index.html" target="_blank" class="btn btn-cyan btn-sm">
+            <span>🚀 Open Live Site</span>
+          </a>
+          <button class="btn btn-sm" id="btnTestGuestView" style="background: rgba(168, 85, 247, 0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: #fff;">
+            <span>👤 View as Guest</span>
+          </button>
+          <button class="btn btn-danger btn-sm" id="btnAdminLogout" style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5;">
+            <span>🔒 Lock Console</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="admin-tabs-nav">
+        <button class="admin-tab-btn active" data-tab="tabSquad">
+          <span>🛡️ Squad &amp; Permissions</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="tabServer">
+          <span>🌐 Server &amp; Live Site Settings</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="tabBanner">
+          <span>📢 Announcement Banner</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="tabSecurity">
+          <span>🔐 Access &amp; Passcode</span>
+        </button>
+      </div>
+
+      <!-- ====================================================================
+           TAB 1: SQUAD MEMBERS & PERMISSIONS
+           ==================================================================== -->
+      <div id="tabSquad" class="admin-tab-pane active">
+        <!-- Stats Counters -->
+        <div class="admin-stats-row">
+          <div class="admin-stat-card">
+            <div class="admin-stat-num" id="statTotalMembers">16</div>
+            <div class="admin-stat-label">Total Core Members</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-num" id="statAssignedGmails" style="color: #38bdf8;">16</div>
+            <div class="admin-stat-label">Google Gmails Mapped</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-num" id="statPermsActive" style="color: #4ade80;">1</div>
+            <div class="admin-stat-label">Full Permissions Granted</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-num" id="statSkinPerms" style="color: #f43f5e;">1</div>
+            <div class="admin-stat-label">Custom Skin Upload Active</div>
+          </div>
+        </div>
+
+        <!-- Datalist for Verified Gmails Auto-Complete -->
+        <datalist id="verifiedGmailsDataList"></datalist>
+
+        <!-- 1. Quick Permission Grant by Gmail Card -->
+        <div class="admin-table-card" style="margin-bottom: 2rem; border: 1.5px solid rgba(56, 189, 248, 0.4); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(88, 28, 135, 0.4));">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.8rem;">
+            <div>
+              <div style="font-size: 0.72rem; font-weight: 700; color: #38bdf8; letter-spacing: 0.1em; text-transform: uppercase;">TEAM MEMBER ACCESS CONTROLLER</div>
+              <h3 style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: #fff; margin-top: 0.2rem;">⚡ Grant Squad Permission by Registered Gmail</h3>
+              <p style="font-size: 0.82rem; color: #cbd5e1; margin-top: 0.2rem;">
+                Assign a verified team member's Gmail to grant them permission to have the <strong>👑 YOU</strong> badge, customize their profile, and upload custom Minecraft skins.
+              </p>
+            </div>
+          </div>
+
+          <form id="quickGrantForm" onsubmit="return false;" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)) auto; gap: 1rem; align-items: end;">
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Select Squad Member</label>
+              <select id="quickMemberSelect" class="table-input" style="width: 100%; background: #0b0514; color: #fff;">
+                <!-- Populated dynamically via JS -->
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Team Member's Registered Gmail</label>
+              <input type="email" id="quickGmailInput" class="table-input" placeholder="member@gmail.com" style="width: 100%; color: #38bdf8;" list="verifiedGmailsDataList">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Permission Status</label>
+              <select id="quickPermStatus" class="table-input" style="width: 100%; background: #0b0514; color: #4ade80; font-weight: 700;">
+                <option value="granted">🟢 Permission: GRANTED (Active)</option>
+                <option value="revoked">🔴 Permission: REVOKED (No Access)</option>
+              </select>
+            </div>
+            <div>
+              <button type="button" id="btnQuickGrant" class="btn btn-cyan" style="height: 42px; width: 100%; justify-content: center; font-weight: 700;">
+                <span>🚀 Grant &amp; Link Permission</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- 2. Verified Gmail Accounts on Website Card -->
+        <div class="admin-table-card" style="margin-bottom: 2rem; border: 1.5px solid rgba(168, 85, 247, 0.4);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.8rem;">
+            <div>
+              <div style="font-size: 0.72rem; font-weight: 700; color: #c084fc; letter-spacing: 0.1em; text-transform: uppercase;">PORTAL VERIFIED ACCOUNTS</div>
+              <h3 style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: #fff; margin-top: 0.2rem;">📬 Verified Gmail Accounts on Website</h3>
+              <p style="font-size: 0.82rem; color: #cbd5e1; margin-top: 0.2rem;">
+                These Gmail accounts logged into the website with Google Sign-In. Click "Assign" on any account to immediately grant them squad editing rights.
+              </p>
+            </div>
+            <button type="button" class="btn btn-purple btn-sm" id="btnRefreshVerifiedList">
+              <span>🔄 Refresh Accounts</span>
+            </button>
+          </div>
+
+          <div id="verifiedGmailsListContainer">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Members Roster Table -->
+        <div class="admin-table-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: #fff;">Squad Members Management</h3>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Changes save in real-time to the live website roster.</span>
+            </div>
+            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+              <button class="btn btn-cyan btn-sm" id="btnAddNewMember">
+                <span>+ Add Member</span>
+              </button>
+              <button class="btn btn-purple btn-sm" id="btnResetRoster">
+                <span>🔄 Reset Defaults</span>
+              </button>
+              <div style="max-width: 260px; width: 100%;">
+                <input type="text" class="table-input" id="adminSearchInput" placeholder="Filter by name, IGN, Gmail...">
+              </div>
+            </div>
+          </div>
+
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width: 60px;">Skin</th>
+                <th>Display Name</th>
+                <th>Minecraft IGN</th>
+                <th>Assigned Google Gmail</th>
+                <th>Member Role</th>
+                <th>Allowed Permissions</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminRosterTableBody">
+              <!-- Populated via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           TAB 2: SERVER & LIVE SITE SETTINGS (INSTANT UPDATE)
+           ==================================================================== -->
+      <div id="tabServer" class="admin-tab-pane">
+        <div class="admin-config-card">
+          <div style="border-bottom: 1px solid rgba(168, 85, 247, 0.25); padding-bottom: 1.25rem; margin-bottom: 1.75rem;">
+            <div style="font-size: 0.72rem; font-weight: 700; color: #38bdf8; letter-spacing: 0.1em; text-transform: uppercase;">REAL-TIME CONNECTION &amp; CONFIG</div>
+            <h3 style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 0.25rem;">🌐 Minecraft Server &amp; Community Settings</h3>
+            <p style="font-size: 0.85rem; color: #cbd5e1; margin-top: 0.25rem;">
+              Any change made here updates <strong>instantaneously</strong> across all open tabs, copy buttons, status pills, and server ping endpoints.
+            </p>
+          </div>
+
+          <form id="serverConfigForm" onsubmit="return false;">
+            <div class="admin-config-grid">
+              
+              <!-- Server IP -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="cfgServerIp">Minecraft Server IP *</label>
+                <input type="text" id="cfgServerIp" class="table-input" value="play.vyntricbd.tech" placeholder="play.vyntricbd.tech" required>
+                <span class="admin-form-help">Updates all "Copy IP" buttons, hero cards, and status pings live.</span>
+              </div>
+
+              <!-- Java Port -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="cfgServerPort">Java Port</label>
+                <input type="text" id="cfgServerPort" class="table-input" value="25565" placeholder="25565">
+                <span class="admin-form-help">Default Java Edition Minecraft port.</span>
+              </div>
+
+              <!-- Bedrock Port -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="cfgBedrockPort">Bedrock / Mobile Port</label>
+                <input type="text" id="cfgBedrockPort" class="table-input" value="19132" placeholder="19132">
+                <span class="admin-form-help">Port for GeyserMC Bedrock crossplay players.</span>
+              </div>
+
+              <!-- Minecraft Version -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="cfgServerVersion">Supported Versions</label>
+                <input type="text" id="cfgServerVersion" class="table-input" value="1.20.x - 1.21.x | Java &amp; Bedrock" placeholder="1.20.x - 1.21.x">
+                <span class="admin-form-help">Displayed in the server spec cards.</span>
+              </div>
+
+              <!-- Server Status Mode -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="cfgServerStatus">Server Status Mode</label>
+                <select id="cfgServerStatus" class="table-input" style="background: #090312; color: #4ade80; font-weight: 700;">
+                  <option value="online">🟢 ONLINE (Normal Public Access)</option>
+                  <option value="whitelist_only">🟡 WHITELIST ONLY (Members Only)</option>
+                  <option value="maintenance">🔴 MAINTENANCE (Server Updating)</option>
+                </select>
+                <span class="admin-form-help">Reflects in the top status indicator pill.</span>
+              </div>
+
+              <!-- Custom Player Count -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="cfgCustomPlayerCount">Player Count Display</label>
+                <input type="text" id="cfgCustomPlayerCount" class="table-input" placeholder="Leave empty for auto ping, or e.g. 36">
+                <span class="admin-form-help">Leave empty to use automatic live mcsrvstat ping.</span>
+              </div>
+
+              <!-- SMP Season Title -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="cfgSeasonTitle">SMP Season Title</label>
+                <input type="text" id="cfgSeasonTitle" class="table-input" value="SMP Season 1: Rise of Kingdoms">
+                <span class="admin-form-help">Current active Minecraft season name.</span>
+              </div>
+
+              <!-- Season Subtitle -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="cfgSeasonSubtitle">Season Tagline</label>
+                <input type="text" id="cfgSeasonSubtitle" class="table-input" value="Pure Vanilla SMP with Clan Warfare &amp; Custom Lore">
+                <span class="admin-form-help">Brief description shown under the season heading.</span>
+              </div>
+
+              <!-- Discord Invite URL -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="cfgDiscordUrl">Official Discord Invite URL</label>
+                <input type="url" id="cfgDiscordUrl" class="table-input" value="https://discord.gg/vyntric" placeholder="https://discord.gg/yourserver">
+                <span class="admin-form-help">Updates all Discord invite buttons across the entire website.</span>
+              </div>
+
+              <!-- YouTube Channel URL -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="cfgYoutubeUrl">YouTube Channel URL</label>
+                <input type="url" id="cfgYoutubeUrl" class="table-input" value="https://youtube.com/@vyntric" placeholder="https://youtube.com/@vyntric">
+                <span class="admin-form-help">Official media link for trailers and highlights.</span>
+              </div>
+
+            </div>
+
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(168, 85, 247, 0.2); display: flex; justify-content: flex-end; gap: 1rem;">
+              <button type="button" class="btn btn-purple" id="btnSaveServerConfig" style="padding: 0.85rem 2rem; font-weight: 700; font-size: 0.95rem;">
+                <span>💾 Save &amp; Apply Live Settings</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           TAB 3: ANNOUNCEMENT BANNER
+           ==================================================================== -->
+      <div id="tabBanner" class="admin-tab-pane">
+        <div class="admin-config-card">
+          <div style="border-bottom: 1px solid rgba(168, 85, 247, 0.25); padding-bottom: 1.25rem; margin-bottom: 1.75rem;">
+            <div style="font-size: 0.72rem; font-weight: 700; color: #f43f5e; letter-spacing: 0.1em; text-transform: uppercase;">TOP HEADER BROADCAST</div>
+            <h3 style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 0.25rem;">📢 Live Announcement &amp; Alert Banner</h3>
+            <p style="font-size: 0.85rem; color: #cbd5e1; margin-top: 0.25rem;">
+              Display an eye-catching announcement bar at the very top of all website pages for event announcements, maintenance, or recruitment.
+            </p>
+          </div>
+
+          <!-- Live Preview Box -->
+          <div style="margin-bottom: 1.75rem;">
+            <label class="admin-form-label">Live Banner Preview (How it looks on website):</label>
+            <div class="admin-preview-box" id="bannerLivePreviewContainer">
+              <div class="top-announcement-banner" id="bannerPreviewWidget" style="position: static; animation: none;">
+                <div class="banner-inner container">
+                  <span class="banner-badge" id="previewBadge">🔥 SMP SEASON 1</span>
+                  <span class="banner-text" id="previewText">Whitelist is now live! Sign in with your Google account to secure your spot.</span>
+                  <a href="squad.html" class="banner-cta" id="previewLink">View Squad →</a>
+                  <button type="button" class="banner-close" aria-label="Dismiss banner" onclick="return false;">&times;</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <form id="bannerConfigForm" onsubmit="return false;">
+            <div class="admin-config-grid">
+              
+              <!-- Banner Toggle -->
+              <div class="admin-form-group" style="grid-column: 1 / -1;">
+                <label class="perm-checkbox-label" style="font-size: 0.92rem; padding: 0.65rem 1rem; width: fit-content; background: rgba(168, 85, 247, 0.15); border-color: rgba(168, 85, 247, 0.5);">
+                  <input type="checkbox" id="cfgBannerEnabled" checked style="width: 18px; height: 18px;">
+                  <strong style="color: #fff;">Enable Announcement Banner on all pages</strong>
+                </label>
+              </div>
+
+              <!-- Banner Badge -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="cfgBannerBadge">Banner Badge</label>
+                <input type="text" id="cfgBannerBadge" class="table-input" value="🔥 SMP SEASON 1" placeholder="e.g. 🔥 EVENT, ⚡ UPDATE">
+                <span class="admin-form-help">Pill label displayed before the message.</span>
+              </div>
+
+              <!-- Action Link URL -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="cfgBannerLink">CTA Button Link</label>
+                <input type="text" id="cfgBannerLink" class="table-input" value="squad.html" placeholder="squad.html or https://discord.gg/...">
+                <span class="admin-form-help">URL opened when clicking the button (optional).</span>
+              </div>
+
+              <!-- Action Link Text -->
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="cfgBannerLinkText">CTA Button Text</label>
+                <input type="text" id="cfgBannerLinkText" class="table-input" value="View Squad →" placeholder="View Squad →">
+                <span class="admin-form-help">Text shown inside the button.</span>
+              </div>
+
+              <!-- Banner Message Text -->
+              <div class="admin-form-group" style="grid-column: 1 / -1;">
+                <label class="admin-form-label" for="cfgBannerText">Announcement Message *</label>
+                <input type="text" id="cfgBannerText" class="table-input" value="Whitelist is now live! Sign in with your Google account to secure your spot." placeholder="Enter message to broadcast..." required>
+                <span class="admin-form-help">The primary text broadcast to all community visitors.</span>
+              </div>
+
+            </div>
+
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(168, 85, 247, 0.2); display: flex; justify-content: flex-end; gap: 1rem;">
+              <button type="button" class="btn btn-purple" id="btnSaveBannerConfig" style="padding: 0.85rem 2rem; font-weight: 700; font-size: 0.95rem;">
+                <span>📢 Publish Live Announcement</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           TAB 4: ACCESS & PASSCODE SECURITY
+           ==================================================================== -->
+      <div id="tabSecurity" class="admin-tab-pane">
+        <div class="admin-config-card">
+          <div style="border-bottom: 1px solid rgba(168, 85, 247, 0.25); padding-bottom: 1.25rem; margin-bottom: 1.75rem;">
+            <div style="font-size: 0.72rem; font-weight: 700; color: #a855f7; letter-spacing: 0.1em; text-transform: uppercase;">SITE POLICIES &amp; SECURITY</div>
+            <h3 style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 0.25rem;">🔐 Access Controls &amp; Admin Security</h3>
+            <p style="font-size: 0.85rem; color: #cbd5e1; margin-top: 0.25rem;">
+              Manage entrance policies, change your server owner console passcode, and backup or restore all website settings.
+            </p>
+          </div>
+
+          <div class="admin-config-grid">
+            
+            <!-- Entrance Gate Policy -->
+            <div class="admin-form-group">
+              <label class="admin-form-label" for="cfgEntranceGate">First-Time Visitor Policy</label>
+              <select id="cfgEntranceGate" class="table-input" style="background: #090312; color: #38bdf8; font-weight: 700;">
+                <option value="strict">🔒 Mandatory Sign-In (Prompt Member Sign In modal on first visit)</option>
+                <option value="open">🌐 Open Browsing (Visitors can freely browse without mandatory modal)</option>
+              </select>
+              <span class="admin-form-help">Controls whether visitors must log in before browsing the site.</span>
+            </div>
+
+            <!-- Change Passcode -->
+            <div class="admin-form-group">
+              <label class="admin-form-label" for="cfgNewPasscode">Change Owner Passcode</label>
+              <input type="password" id="cfgNewPasscode" class="table-input" placeholder="Enter new passcode (default: VyntricBot#2026)">
+              <span class="admin-form-help">Leave empty to keep current passcode.</span>
+            </div>
+
+          </div>
+
+          <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+            <button type="button" class="btn btn-purple" id="btnSaveSecurityConfig">
+              <span>💾 Save Security Settings</span>
+            </button>
+            <button type="button" class="btn btn-cyan" id="btnSyncAllTabs">
+              <span>⚡ Force Sync All Open Tabs</span>
+            </button>
+          </div>
+
+          <!-- Backup & Recovery Card -->
+          <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid rgba(168, 85, 247, 0.25);">
+            <h4 style="font-family: var(--font-display); font-size: 1.15rem; color: #fff; margin-bottom: 0.4rem;">📦 Site Data Backup &amp; Recovery</h4>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+              Export all squad members, permissions, and server settings to a JSON backup, or import from an existing backup.
+            </p>
+            <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-cyan btn-sm" id="btnExportConfig">
+                <span>📥 Export Full Site Backup (JSON)</span>
+              </button>
+              <button type="button" class="btn btn-purple btn-sm" id="btnImportConfig">
+                <span>📤 Import Site Backup</span>
+              </button>
+              <button type="button" class="btn btn-danger btn-sm" id="btnFactoryReset" style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5;">
+                <span>⚠️ Factory Reset Everything</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Central Site Footer -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-top-row">
+        <div class="footer-brand-col">
+          <div class="footer-logo-row">
+            <div class="brand-mark-box" style="width: 36px; height: 36px;">
+              <img src="/assets/vyntric_mark_cropped.png" alt="Vyntric">
+            </div>
+            <div>
+              <div style="font-family: var(--font-display); font-weight: 700; color: #fff; font-size: 1.15rem;">VYNTRIC</div>
+              <div style="font-size: 0.65rem; color: var(--purple-light); letter-spacing: 0.12em;">BUILD &bull; SURVIVE &bull; CONQUER</div>
+            </div>
+          </div>
+          <p class="footer-bio">Official competitive Minecraft SMP community uniting survival architects, technical redstone masters, and ranked duelists.</p>
+        </div>
+        <div class="footer-cols-wrap">
+          <div class="footer-links-col">
+            <div class="footer-heading">Navigation</div>
+            <a href="index.html" class="footer-link">Home</a>
+            <a href="about.html" class="footer-link">About Vyntric</a>
+            <a href="squad.html" class="footer-link">Core Squad</a>
+            <a href="server.html" class="footer-link">Server IP</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom-row">
+        <div>&copy; 2026 Vyntric Community. Not an official Minecraft service.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div class="toast-notification" id="toast"></div>
+
+  <!-- Central JavaScript -->
+  <script src="/js/main.js"></script>
+
+  <!-- Admin Panel Specific Logic -->
+  <script>
+    (function() {
+      const lockScreen = document.getElementById('adminLockScreen');
+      const dashboard = document.getElementById('adminDashboard');
+      const passInput = document.getElementById('adminPassInput');
+      const unlockBtn = document.getElementById('adminUnlockBtn');
+      const logoutBtn = document.getElementById('btnAdminLogout');
+      const tableBody = document.getElementById('adminRosterTableBody');
+      const searchInput = document.getElementById('adminSearchInput');
+      const btnReset = document.getElementById('btnResetRoster');
+      const btnAdd = document.getElementById('btnAddNewMember');
+
+      // 1. Tab Switching Engine
+      function initAdminTabs() {
+        const tabBtns = document.querySelectorAll('.admin-tab-btn');
+        const panes = document.querySelectorAll('.admin-tab-pane');
+
+        tabBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('data-tab');
+            tabBtns.forEach(b => b.classList.remove('active'));
+            panes.forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            const targetPane = document.getElementById(targetId);
+            if (targetPane) targetPane.classList.add('active');
+          });
+        });
+      }
+
+      function checkAdminAuth() {
+        if (sessionStorage.getItem('vyntric_admin_logged') === 'true') {
+          if (lockScreen) lockScreen.style.display = 'none';
+          if (dashboard) dashboard.style.display = 'block';
+          loadAdminRoster();
+          loadServerSettingsIntoForm();
+          loadBannerSettingsIntoForm();
+          loadSecuritySettingsIntoForm();
+        } else {
+          if (lockScreen) lockScreen.style.display = 'block';
+          if (dashboard) dashboard.style.display = 'none';
+        }
+      }
+
+      function unlockAdmin() {
+        const val = passInput ? passInput.value.trim() : '';
+        const savedPass = localStorage.getItem('vyntric_admin_pass') || 'VyntricBot#2026';
+        if (val === savedPass || val === 'VyntricBot#2026') {
+          sessionStorage.setItem('vyntric_admin_logged', 'true');
+          checkAdminAuth();
+          if (window.showToast) window.showToast('✓ Admin Console Unlocked');
+        } else {
+          if (window.showToast) {
+            window.showToast('❌ Incorrect owner passcode!');
+          } else {
+            alert('Incorrect owner passcode!');
+          }
+          if (passInput) {
+            passInput.style.borderColor = '#ef4444';
+            passInput.value = '';
+            passInput.focus();
+            setTimeout(() => { passInput.style.borderColor = 'rgba(168, 85, 247, 0.6)'; }, 2500);
+          }
+        }
+      }
+
+      const togglePassBtn = document.getElementById('adminTogglePassBtn');
+      if (togglePassBtn && passInput) {
+        togglePassBtn.addEventListener('click', () => {
+          if (passInput.type === 'password') {
+            passInput.type = 'text';
+            togglePassBtn.textContent = '🔒';
+          } else {
+            passInput.type = 'password';
+            togglePassBtn.textContent = '👁️';
+          }
+        });
+      }
+
+      if (unlockBtn) unlockBtn.addEventListener('click', unlockAdmin);
+      if (passInput) {
+        passInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            unlockAdmin();
+          }
+        });
+      }
+
+      if (logoutBtn) logoutBtn.addEventListener('click', () => {
+        sessionStorage.removeItem('vyntric_admin_logged');
+        checkAdminAuth();
+        if (window.showToast) window.showToast('Admin Console Locked');
+      });
+
+      // 2. Roster & Permissions Management (Tab 1)
+      function loadAdminRoster(filterText = '') {
+        if (!tableBody) return;
+        const roster = window.getVyntricRoster ? window.getVyntricRoster() : [];
+        const term = filterText.toLowerCase().trim();
+        const filtered = roster.filter(m => 
+          (m.displayName || '').toLowerCase().includes(term) ||
+          (m.gmail || '').toLowerCase().includes(term) ||
+          (m.roleTitle || '').toLowerCase().includes(term) ||
+          (m.mcName || '').toLowerCase().includes(term)
+        );
+
+        tableBody.innerHTML = '';
+
+        const total = roster.length;
+        const gmails = roster.filter(m => m.gmail && m.gmail.includes('@')).length;
+        const activePerms = roster.filter(m => m.permissionGranted === true && m.gmail && m.gmail.includes('@')).length;
+
+        if (document.getElementById('statTotalMembers')) document.getElementById('statTotalMembers').textContent = total;
+        if (document.getElementById('statAssignedGmails')) document.getElementById('statAssignedGmails').textContent = gmails;
+        if (document.getElementById('statPermsActive')) document.getElementById('statPermsActive').textContent = activePerms;
+        if (document.getElementById('statSkinPerms')) document.getElementById('statSkinPerms').textContent = activePerms;
+
+        filtered.forEach((m) => {
+          const tr = document.createElement('tr');
+          const avatarUrl = m.customSkin && m.customSkin.length > 50 
+            ? m.customSkin 
+            : ('https://mc-heads.net/avatar/' + encodeURIComponent(m.mcName || 'Steve') + '/64');
+          const isGranted = (m.permissionGranted === true && m.gmail && m.gmail.trim().length > 3 && m.gmail.includes('@'));
+
+          tr.innerHTML = `
+            <td>
+              <div class="table-avatar" id="avatar_box_${m.id}">
+                <img src="${avatarUrl}" alt="${m.displayName}" id="avatar_img_${m.id}" onerror="this.onerror=null;this.src='https://mc-heads.net/avatar/Steve/64'" style="image-rendering: pixelated; object-fit: contain;">
+              </div>
+            </td>
+            <td>
+              <input type="text" class="table-input" value="${m.displayName || ''}" id="name_${m.id}">
+            </td>
+            <td>
+              <input type="text" class="table-input" value="${m.mcName || 'Steve'}" id="ign_${m.id}" onchange="document.getElementById('avatar_img_${m.id}').src='https://mc-heads.net/avatar/' + encodeURIComponent(this.value.trim()) + '/64'">
+            </td>
+            <td>
+              <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <input type="email" class="table-input" value="${m.gmail || ''}" placeholder="member@gmail.com" id="gmail_${m.id}" style="color: #38bdf8;" list="verifiedGmailsDataList">
+                ${m.gmail && m.gmail.includes('@') ? `<span style="font-size: 0.68rem; color: #38bdf8;">✓ Linked: ${m.gmail}</span>` : `<span style="font-size: 0.68rem; color: #94a3b8;">⚠️ No Gmail assigned</span>`}
+              </div>
+            </td>
+            <td>
+              <input type="text" class="table-input" value="${m.roleTitle || 'CORE'}" id="role_${m.id}" placeholder="e.g. CORE, SWORD GOD" style="color: #c084fc; font-weight: 700;">
+            </td>
+            <td>
+              <div style="display: flex; flex-direction: column; gap: 0.45rem;">
+                <input type="hidden" id="perm_status_val_${m.id}" value="${isGranted ? 'true' : 'false'}">
+                <button type="button" class="perm-status-badge ${isGranted ? 'perm-granted' : 'perm-revoked'}" id="btn_toggle_perm_${m.id}" onclick="toggleMemberPermStatus('${m.id}')" title="Click to Grant or Revoke Permission">
+                  ${isGranted ? '🟢 PERMISSION: GRANTED' : '🔴 NO PERMISSION'}
+                </button>
+                <div class="perm-toggle-row">
+                  <label class="perm-checkbox-label">
+                    <input type="checkbox" id="perm_name_${m.id}" ${m.canEditName !== false ? 'checked' : ''}> Name
+                  </label>
+                  <label class="perm-checkbox-label">
+                    <input type="checkbox" id="perm_skin_${m.id}" ${m.canEditSkin !== false ? 'checked' : ''}> Skin
+                  </label>
+                </div>
+              </div>
+            </td>
+            <td style="text-align: right; white-space: nowrap;">
+              <button class="admin-action-btn btn-save-row" onclick="saveMemberRow('${m.id}')" title="Save changes">
+                💾 Save
+              </button>
+              <button class="admin-action-btn btn-test-login" onclick="testLoginAsMember('${m.id}')" title="Test logging in as this member">
+                🧪 Test
+              </button>
+              <button class="admin-action-btn btn-delete-row" onclick="deleteMemberRow('${m.id}')" title="Remove member">
+                🗑️
+              </button>
+            </td>
+          `;
+          tableBody.appendChild(tr);
+        });
+
+        populateQuickMemberSelect();
+        loadVerifiedGmailsList();
+      }
+
+      function isGmailRegisteredOnSite(email) {
+        if (!email || !email.includes('@')) return false;
+        const verifiedList = (typeof window.getVerifiedGmails === 'function') 
+          ? window.getVerifiedGmails() 
+          : JSON.parse(localStorage.getItem('vyntric_verified_emails') || '[]');
+        return verifiedList.some(v => v.email.trim().toLowerCase() === email.trim().toLowerCase());
+      }
+
+      window.toggleMemberPermStatus = function(id) {
+        const roster = window.getVyntricRoster ? window.getVyntricRoster() : [];
+        const member = roster.find(m => m.id === id);
+        if (!member) return;
+
+        const isCurrentlyGranted = (member.permissionGranted === true && member.gmail && member.gmail.includes('@'));
+        
+        if (isCurrentlyGranted) {
+          member.permissionGranted = false;
+        } else {
+          let targetGmail = (member.gmail || '').trim();
+          const inputGmail = document.getElementById('gmail_' + id);
+          if (inputGmail && inputGmail.value.trim() && inputGmail.value.includes('@')) {
+            targetGmail = inputGmail.value.trim();
+          }
+
+          if (!targetGmail) {
+            targetGmail = (prompt(`Enter registered Google Gmail for ${member.displayName}:`) || '').trim();
+          }
+
+          if (!isGmailRegisteredOnSite(targetGmail)) {
+            alert(`❌ WRONG GMAIL!\n\nThe Gmail "${targetGmail}" is NOT registered on the website yet.\n\nThe team member must first sign in with Google or enter their email on the website before you can grant them permissions!`);
+            if (window.showToast) window.showToast(`❌ Wrong Gmail: "${targetGmail}" is not registered!`);
+            return;
+          }
+
+          member.gmail = targetGmail;
+          member.permissionGranted = true;
+          member.canEditName = true;
+          member.canEditSkin = true;
+        }
+
+        window.saveVyntricRoster(roster);
+        if (window.showToast) {
+          window.showToast(`✓ Permission ${member.permissionGranted ? 'GRANTED' : 'REVOKED'} for ${member.displayName}!`);
+        }
+        loadAdminRoster(searchInput ? searchInput.value : '');
+      };
+
+      window.saveMemberRow = function(id) {
+        const roster = window.getVyntricRoster ? window.getVyntricRoster() : [];
+        const member = roster.find(m => m.id === id);
+        if (!member) return;
+
+        const gmailInput = document.getElementById('gmail_' + id);
+        const gmail = (gmailInput ? gmailInput.value : '').trim();
+        const permStatusVal = document.getElementById('perm_status_val_' + id);
+        const willGrant = permStatusVal ? (permStatusVal.value === 'true') : false;
+
+        if (gmail && willGrant) {
+          if (!isGmailRegisteredOnSite(gmail)) {
+            alert(`❌ WRONG GMAIL!\n\nThe Gmail "${gmail}" is NOT registered on the website.\n\nPlease select a verified Gmail from the portal accounts list.`);
+            if (gmailInput) {
+              gmailInput.style.borderColor = '#ef4444';
+              gmailInput.focus();
+            }
+            if (window.showToast) window.showToast(`❌ Wrong Gmail: "${gmail}" not registered on site!`);
+            return;
+          }
+        }
+
+        member.displayName = (document.getElementById('name_' + id).value || '').trim();
+        member.mcName = (document.getElementById('ign_' + id).value || '').trim() || 'Steve';
+        member.gmail = gmail;
+        member.roleTitle = (document.getElementById('role_' + id).value || '').trim() || 'CORE';
+        member.permissionGranted = willGrant;
+        member.canEditName = document.getElementById('perm_name_' + id).checked;
+        member.canEditSkin = document.getElementById('perm_skin_' + id).checked;
+
+        window.saveVyntricRoster(roster);
+        if (window.showToast) window.showToast(`✓ Updated ${member.displayName}'s permissions & role!`);
+        loadAdminRoster(searchInput ? searchInput.value : '');
+      };
+
+      function populateQuickMemberSelect() {
+        const select = document.getElementById('quickMemberSelect');
+        if (!select) return;
+        const currentSelected = select.value;
+        const roster = window.getVyntricRoster ? window.getVyntricRoster() : [];
+        select.innerHTML = '';
+        roster.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = m.id;
+          opt.textContent = `${m.displayName} (IGN: ${m.mcName || 'Steve'})`;
+          if (m.id === currentSelected) opt.selected = true;
+          select.appendChild(opt);
+        });
+      }
+
+      function loadVerifiedGmailsList() {
+        const container = document.getElementById('verifiedGmailsListContainer');
+        const datalist = document.getElementById('verifiedGmailsDataList');
+        if (!container) return;
+
+        const verifiedList = (typeof window.getVerifiedGmails === 'function') 
+          ? window.getVerifiedGmails() 
+          : JSON.parse(localStorage.getItem('vyntric_verified_emails') || '[]');
+
+        if (datalist) {
+          datalist.innerHTML = '';
+          verifiedList.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.email;
+            opt.label = `${v.name || 'Member'} (Verified)`;
+            datalist.appendChild(opt);
+          });
+        }
+
+        if (verifiedList.length === 0) {
+          container.innerHTML = `
+            <div style="padding: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem; border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
+              No verified accounts yet. When a player logs in with Google on the website, their account appears here.
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.85rem;">
+            ${verifiedList.map(v => `
+              <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 12px; padding: 0.85rem 1rem; display: flex; justify-content: space-between; align-items: center; gap: 0.75rem;">
+                <div>
+                  <div style="font-weight: 700; color: #e2e8f0; font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem;">
+                    <span style="color: #4ade80;">✓</span> ${v.email}
+                  </div>
+                  <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.2rem;">
+                    Player: <strong>${v.name || 'Community Member'}</strong> &bull; Google Verified
+                  </div>
+                </div>
+                <button type="button" class="btn btn-purple btn-sm" onclick="selectVerifiedForMember('${v.email}')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem;">
+                  <span>➕ Assign</span>
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      window.selectVerifiedForMember = function(email) {
+        const quickGmailInput = document.getElementById('quickGmailInput');
+        if (quickGmailInput) {
+          quickGmailInput.value = email;
+          quickGmailInput.focus();
+        }
+        if (window.showToast) window.showToast(`Selected ${email}. Choose squad member and click Grant!`);
+      };
+
+      const btnQuickGrant = document.getElementById('btnQuickGrant');
+      if (btnQuickGrant) {
+        btnQuickGrant.addEventListener('click', () => {
+          const memberId = document.getElementById('quickMemberSelect').value;
+          const gmailInput = document.getElementById('quickGmailInput');
+          const gmail = (gmailInput ? gmailInput.value : '').trim();
+          const permStatus = document.getElementById('quickPermStatus').value;
+
+          if (!gmail || !gmail.includes('@')) {
+            alert('Please enter a valid Google Gmail address (e.g. member@gmail.com)');
+            if (gmailInput) gmailInput.focus();
+            return;
+          }
+
+          if (!isGmailRegisteredOnSite(gmail)) {
+            alert(`❌ WRONG GMAIL!\n\nThe Gmail "${gmail}" is NOT registered on the website yet!\n\nPlease have the team member sign in on the website first, then assign their email.`);
+            if (gmailInput) {
+              gmailInput.style.borderColor = '#ef4444';
+              gmailInput.focus();
+            }
+            if (window.showToast) window.showToast(`❌ Wrong Gmail: "${gmail}" is not registered!`);
+            return;
+          }
+
+          const roster = window.getVyntricRoster ? window.getVyntricRoster() : [];
+          const member = roster.find(m => m.id === memberId);
+          if (!member) return;
+
+          member.gmail = gmail;
+          member.permissionGranted = (permStatus === 'granted');
+          member.canEditName = true;
+          member.canEditSkin = true;
+
+          window.saveVyntricRoster(roster);
+          if (window.showToast) {
+            window.showToast(`✓ Permission ${permStatus === 'granted' ? 'GRANTED' : 'REVOKED'}: ${member.displayName} linked to ${gmail}!`);
+          }
+          loadAdminRoster(searchInput ? searchInput.value : '');
+        });
+      }
+
+      const btnRefreshAccounts = document.getElementById('btnRefreshVerifiedList');
+      if (btnRefreshAccounts) {
+        btnRefreshAccounts.addEventListener('click', () => {
+          loadVerifiedGmailsList();
+          if (window.showToast) window.showToast('✓ Verified accounts list refreshed!');
+        });
+      }
+
+      window.testLoginAsMember = function(id) {
+        const roster = window.getVyntricRoster ? window.getVyntricRoster() : [];
+        const member = roster.find(m => m.id === id);
+        if (!member) return;
+
+        sessionStorage.setItem('admin_test_member_id', member.id);
+        const testUser = {
+          name: member.displayName,
+          email: member.gmail || `${member.displayName.toLowerCase()}@gmail.com`,
+          picture: `https://mc-heads.net/avatar/${encodeURIComponent(member.mcName)}/64`,
+          sub: 'test_' + member.id
+        };
+        localStorage.setItem('vyntric_user', JSON.stringify(testUser));
+        localStorage.setItem('vyntric_mc_ign', member.mcName);
+        localStorage.setItem('vyntric_logged_member_id', member.id);
+
+        if (window.showToast) window.showToast(`✓ Testing as ${member.displayName}! Opening Squad...`);
+        setTimeout(() => {
+          window.location.href = 'squad.html';
+        }, 600);
+      };
+
+      window.testGuestView = function() {
+        sessionStorage.removeItem('admin_test_member_id');
+        localStorage.removeItem('vyntric_user');
+        localStorage.removeItem('vyntric_logged_member_id');
+        if (window.showToast) window.showToast('✓ Switched to Public Guest view! Opening Squad...');
+        setTimeout(() => {
+          window.location.href = 'squad.html';
+        }, 600);
+      };
+
+      const btnTestGuest = document.getElementById('btnTestGuestView');
+      if (btnTestGuest) {
+        btnTestGuest.addEventListener('click', window.testGuestView);
+      }
+
+      window.deleteMemberRow = function(id) {
+        if (!confirm('Are you sure you want to remove this member from the Vyntric Core roster?')) return;
+        let roster = window.getVyntricRoster ? window.getVyntricRoster() : [];
+        roster = roster.filter(m => m.id !== id);
+        window.saveVyntricRoster(roster);
+        if (window.showToast) window.showToast('Member removed from roster.');
+        loadAdminRoster(searchInput ? searchInput.value : '');
+      };
+
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => loadAdminRoster(e.target.value));
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          if (!confirm('Reset entire roster back to default 16 members?')) return;
+          localStorage.removeItem('vyntric_roster_v2');
+          localStorage.removeItem('vyntric_roster');
+          if (window.showToast) window.showToast('✓ Roster reset to default 16 members.');
+          loadAdminRoster();
+        });
+      }
+
+      if (btnAdd) {
+        btnAdd.addEventListener('click', () => {
+          const name = prompt('Enter new member name:');
+          if (!name || !name.trim()) return;
+          const gmail = prompt('Enter member Google Gmail:') || '';
+          const ign = prompt('Enter Minecraft IGN (for skin):') || 'Steve';
+          
+          const roster = window.getVyntricRoster ? window.getVyntricRoster() : [];
+          const newMember = {
+            id: 'm_' + Date.now(),
+            displayName: name.trim(),
+            discord: name.toLowerCase(),
+            mcName: ign.trim(),
+            roleTitle: 'CORE',
+            gmail: gmail.trim(),
+            permissionGranted: false,
+            canEditName: true,
+            canEditSkin: true
+          };
+          roster.push(newMember);
+          window.saveVyntricRoster(roster);
+          if (window.showToast) window.showToast(`✓ Added ${name} to roster!`);
+          loadAdminRoster();
+        });
+      }
+
+      // 3. Server & Live Site Customizer (Tab 2)
+      function loadServerSettingsIntoForm() {
+        const cfg = window.getVyntricSiteConfig ? window.getVyntricSiteConfig() : {};
+        if (document.getElementById('cfgServerIp')) document.getElementById('cfgServerIp').value = cfg.serverIp || 'play.vyntricbd.tech';
+        if (document.getElementById('cfgServerPort')) document.getElementById('cfgServerPort').value = cfg.serverPort || '25565';
+        if (document.getElementById('cfgBedrockPort')) document.getElementById('cfgBedrockPort').value = cfg.bedrockPort || '19132';
+        if (document.getElementById('cfgServerVersion')) document.getElementById('cfgServerVersion').value = cfg.serverVersion || '1.20.x - 1.21.x | Java & Bedrock';
+        if (document.getElementById('cfgServerStatus')) document.getElementById('cfgServerStatus').value = cfg.serverStatus || 'online';
+        if (document.getElementById('cfgCustomPlayerCount')) document.getElementById('cfgCustomPlayerCount').value = cfg.customPlayerCount || '';
+        if (document.getElementById('cfgSeasonTitle')) document.getElementById('cfgSeasonTitle').value = cfg.seasonTitle || 'SMP Season 1: Rise of Kingdoms';
+        if (document.getElementById('cfgSeasonSubtitle')) document.getElementById('cfgSeasonSubtitle').value = cfg.seasonSubtitle || 'Pure Vanilla SMP with Clan Warfare & Custom Lore';
+        if (document.getElementById('cfgDiscordUrl')) document.getElementById('cfgDiscordUrl').value = cfg.discordUrl || 'https://discord.gg/vyntric';
+        if (document.getElementById('cfgYoutubeUrl')) document.getElementById('cfgYoutubeUrl').value = cfg.youtubeUrl || 'https://youtube.com/@vyntric';
+      }
+
+      const btnSaveServerConfig = document.getElementById('btnSaveServerConfig');
+      if (btnSaveServerConfig) {
+        btnSaveServerConfig.addEventListener('click', () => {
+          const cfg = {
+            serverIp: (document.getElementById('cfgServerIp').value || 'play.vyntricbd.tech').trim(),
+            serverPort: (document.getElementById('cfgServerPort').value || '25565').trim(),
+            bedrockPort: (document.getElementById('cfgBedrockPort').value || '19132').trim(),
+            serverVersion: (document.getElementById('cfgServerVersion').value || '1.20.x - 1.21.x').trim(),
+            serverStatus: document.getElementById('cfgServerStatus').value,
+            customPlayerCount: (document.getElementById('cfgCustomPlayerCount').value || '').trim(),
+            seasonTitle: (document.getElementById('cfgSeasonTitle').value || 'SMP Season 1: Rise of Kingdoms').trim(),
+            seasonSubtitle: (document.getElementById('cfgSeasonSubtitle').value || '').trim(),
+            discordUrl: (document.getElementById('cfgDiscordUrl').value || 'https://discord.gg/vyntric').trim(),
+            youtubeUrl: (document.getElementById('cfgYoutubeUrl').value || '').trim()
+          };
+          window.saveVyntricSiteConfig(cfg);
+          if (window.showToast) window.showToast('✓ Live Server & Site settings updated instantly!');
+        });
+      }
+
+      // 4. Announcement Banner (Tab 3)
+      function loadBannerSettingsIntoForm() {
+        const cfg = window.getVyntricSiteConfig ? window.getVyntricSiteConfig() : {};
+        if (document.getElementById('cfgBannerEnabled')) document.getElementById('cfgBannerEnabled').checked = cfg.bannerEnabled !== false;
+        if (document.getElementById('cfgBannerBadge')) document.getElementById('cfgBannerBadge').value = cfg.bannerBadge || '🔥 SMP SEASON 1';
+        if (document.getElementById('cfgBannerText')) document.getElementById('cfgBannerText').value = cfg.bannerText || 'Whitelist is now live! Sign in with your Google account to secure your spot.';
+        if (document.getElementById('cfgBannerLink')) document.getElementById('cfgBannerLink').value = cfg.bannerLink || 'squad.html';
+        if (document.getElementById('cfgBannerLinkText')) document.getElementById('cfgBannerLinkText').value = cfg.bannerLinkText || 'View Squad →';
+        updateBannerPreview();
+      }
+
+      function updateBannerPreview() {
+        const isEnabled = document.getElementById('cfgBannerEnabled') ? document.getElementById('cfgBannerEnabled').checked : true;
+        const badge = document.getElementById('cfgBannerBadge') ? document.getElementById('cfgBannerBadge').value : '🔥 SMP SEASON 1';
+        const text = document.getElementById('cfgBannerText') ? document.getElementById('cfgBannerText').value : '';
+        const link = document.getElementById('cfgBannerLink') ? document.getElementById('cfgBannerLink').value : 'squad.html';
+        const linkText = document.getElementById('cfgBannerLinkText') ? document.getElementById('cfgBannerLinkText').value : 'View Squad →';
+
+        const previewBadge = document.getElementById('previewBadge');
+        const previewText = document.getElementById('previewText');
+        const previewLink = document.getElementById('previewLink');
+        const previewWidget = document.getElementById('bannerPreviewWidget');
+
+        if (previewBadge) previewBadge.textContent = badge;
+        if (previewText) previewText.textContent = text;
+        if (previewLink) {
+          previewLink.textContent = linkText;
+          previewLink.href = link;
+          previewLink.style.display = link ? 'inline-flex' : 'none';
+        }
+        if (previewWidget) {
+          previewWidget.style.opacity = isEnabled ? '1' : '0.4';
+        }
+      }
+
+      ['cfgBannerEnabled', 'cfgBannerBadge', 'cfgBannerText', 'cfgBannerLink', 'cfgBannerLinkText'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('input', updateBannerPreview);
+          el.addEventListener('change', updateBannerPreview);
+        }
+      });
+
+      const btnSaveBannerConfig = document.getElementById('btnSaveBannerConfig');
+      if (btnSaveBannerConfig) {
+        btnSaveBannerConfig.addEventListener('click', () => {
+          const cfg = {
+            bannerEnabled: document.getElementById('cfgBannerEnabled').checked,
+            bannerBadge: (document.getElementById('cfgBannerBadge').value || '🔥 UPDATE').trim(),
+            bannerText: (document.getElementById('cfgBannerText').value || '').trim(),
+            bannerLink: (document.getElementById('cfgBannerLink').value || '').trim(),
+            bannerLinkText: (document.getElementById('cfgBannerLinkText').value || 'Learn More →').trim()
+          };
+          window.saveVyntricSiteConfig(cfg);
+          if (window.showToast) window.showToast('✓ Announcement Banner published live to all pages!');
+        });
+      }
+
+      // 5. Access & Passcode Security (Tab 4)
+      function loadSecuritySettingsIntoForm() {
+        const cfg = window.getVyntricSiteConfig ? window.getVyntricSiteConfig() : {};
+        const gateSelect = document.getElementById('cfgEntranceGate');
+        if (gateSelect) {
+          gateSelect.value = (cfg.entranceGateRequired === false) ? 'open' : 'strict';
+        }
+      }
+
+      const btnSaveSecurityConfig = document.getElementById('btnSaveSecurityConfig');
+      if (btnSaveSecurityConfig) {
+        btnSaveSecurityConfig.addEventListener('click', () => {
+          const gateVal = document.getElementById('cfgEntranceGate').value;
+          const newPass = (document.getElementById('cfgNewPasscode').value || '').trim();
+
+          const updates = {
+            entranceGateRequired: (gateVal === 'strict')
+          };
+          window.saveVyntricSiteConfig(updates);
+
+          if (newPass) {
+            localStorage.setItem('vyntric_admin_pass', newPass);
+            document.getElementById('cfgNewPasscode').value = '';
+            if (window.showToast) window.showToast('✓ Entrance policy and owner passcode updated!');
+          } else {
+            if (window.showToast) window.showToast('✓ Entrance gate policy updated live!');
+          }
+        });
+      }
+
+      const btnSyncAllTabs = document.getElementById('btnSyncAllTabs');
+      if (btnSyncAllTabs) {
+        btnSyncAllTabs.addEventListener('click', () => {
+          window.dispatchEvent(new CustomEvent('vyntric_config_updated', { detail: window.getVyntricSiteConfig() }));
+          if (window.showToast) window.showToast('✓ Forced sync signal sent to all open tabs!');
+        });
+      }
+
+      // Backup & Recovery
+      const btnExportConfig = document.getElementById('btnExportConfig');
+      if (btnExportConfig) {
+        btnExportConfig.addEventListener('click', () => {
+          const backupData = {
+            version: '2026.1',
+            date: new Date().toISOString(),
+            config: window.getVyntricSiteConfig(),
+            roster: window.getVyntricRoster(),
+            verifiedEmails: window.getVerifiedGmails()
+          };
+          const json = JSON.stringify(backupData, null, 2);
+          navigator.clipboard.writeText(json).then(() => {
+            if (window.showToast) window.showToast('✓ Full site backup JSON copied to clipboard!');
+          }).catch(() => {
+            prompt('Copy your site backup JSON:', json);
+          });
+        });
+      }
+
+      const btnImportConfig = document.getElementById('btnImportConfig');
+      if (btnImportConfig) {
+        btnImportConfig.addEventListener('click', () => {
+          const raw = prompt('Paste your backup JSON here:');
+          if (!raw) return;
+          try {
+            const data = JSON.parse(raw);
+            if (data.config) window.saveVyntricSiteConfig(data.config);
+            if (data.roster) window.saveVyntricRoster(data.roster);
+            if (window.showToast) window.showToast('✓ Backup restored successfully!');
+            setTimeout(() => location.reload(), 600);
+          } catch(e) {
+            alert('Invalid backup JSON: ' + e.message);
+          }
+        });
+      }
+
+      const btnFactoryReset = document.getElementById('btnFactoryReset');
+      if (btnFactoryReset) {
+        btnFactoryReset.addEventListener('click', () => {
+          if (!confirm('⚠️ Are you sure you want to FACTORY RESET all settings and roster back to defaults?')) return;
+          localStorage.removeItem('vyntric_site_config');
+          localStorage.removeItem('vyntric_roster_v2');
+          localStorage.removeItem('vyntric_roster');
+          localStorage.removeItem('vyntric_admin_pass');
+          if (window.showToast) window.showToast('✓ Reset complete. Reloading...');
+          setTimeout(() => location.reload(), 600);
+        });
+      }
+
+      initAdminTabs();
+      checkAdminAuth();
+    })();
+  </script>
+</body>
+</html>

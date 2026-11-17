@@ -1,0 +1,8 @@
+{
+  "name": "vyntric-community",
+  "version": "1.0.0",
+  "description": "Vyntric — Official Minecraft SMP & Competitive Community",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

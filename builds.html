@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Monumental Survival Builds & Gallery — Vyntric</title>
+  <meta name="description" content="Explore our world's floating island sanctums, subterranean biospheres, and gladiator battlegrounds.">
+  <meta name="theme-color" content="#06020c">
+  <link rel="icon" type="image/png" href="/assets/vyntric_mark_cropped.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+  
+  <!-- Central Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- Google Sign In SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+  <!-- Floating Particles Canvas -->
+  <canvas id="particlesCanvas"></canvas>
+
+  <!-- Ambient Video Trailer Background -->
+  <div class="trailer-bg-container" aria-hidden="true">
+    <video class="trailer-video" id="minecraftTrailerVideo" autoplay loop muted playsinline preload="auto">
+      <source src="/assets/minecraft_trailer.mp4" type="video/mp4">
+      <source src="/assets/minecraft_trailer.webm" type="video/webm">
+    </video>
+    <div class="trailer-vignette"></div>
+  </div>
+
+  <!-- Background Music Element -->
+  <audio id="minecraftBgm" loop preload="auto">
+    <source src="/assets/audio/sweden.mp3" type="audio/mpeg">
+    <source src="/assets/audio/wet_hands.mp3" type="audio/mpeg">
+    <source src="/assets/audio/subwoofer_lullaby.mp3" type="audio/mpeg">
+    <source src="/assets/audio/haggstrom.mp3" type="audio/mpeg">
+    <source src="/assets/audio/pigstep.mp3" type="audio/mpeg">
+  </audio>
+  <!-- ==========================================================================
+     SITE HEADER & NAVBAR
+     ========================================================================== -->
+  <header class="site-header" id="siteHeader">
+    <div class="container nav-container">
+      
+      <!-- Brand Logo -->
+      <a href="index.html" class="brand-logo-wrap" aria-label="Vyntric Home">
+        <div class="brand-mark-box">
+          <img src="/assets/vyntric_mark_cropped.png" alt="Vyntric Emblem" onerror="this.onerror=null;this.src='/assets/vyntric_mark.png'">
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-name">VYNTRIC</span>
+          <span class="brand-sub">BUILD &bull; SURVIVE &bull; CONQUER</span>
+        </div>
+      </a>
+
+      <!-- Pill Nav Menu -->
+      <nav class="nav-menu-capsule" aria-label="Main Navigation">
+        <a href="index.html" class="nav-pill-link">Home</a>
+        <a href="about.html" class="nav-pill-link">About</a>
+        <a href="squad.html" class="nav-pill-link">Squad</a>
+        <a href="builds.html" class="nav-pill-link active">Builds</a>
+        <a href="server.html" class="nav-pill-link">Server IP</a>
+        <a href="faq.html" class="nav-pill-link">FAQ</a>
+        <a href="community.html" class="nav-pill-link">Community</a>
+      </nav>
+
+      <!-- Sound Pod & Actions -->
+      <div class="header-actions">
+        
+        <!-- Sound Capsule with Equalizer -->
+        <div class="sound-pod-capsule" title="Toggle Minecraft Sweden Audio &amp; SFX">
+          <button class="sound-btn" id="sfxToggleBtn" aria-label="Toggle Sound">
+            <span id="sfxIcon">&#128263;</span>
+            <span id="sfxText">SOUND: OFF</span>
+          </button>
+          <div class="equalizer-bars" id="equalizerBars">
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+          </div>
+          <input type="range" class="volume-slider" id="bgmVolumeSlider" min="0" max="100" value="80" aria-label="Audio Volume">
+        </div>
+
+        <!-- Google Login Button -->
+        <button class="google-login-btn" id="navGoogleLoginBtn" aria-label="Sign in with Google">
+          <svg class="google-icon-svg" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span id="navLoginBtnText">Sign In</span>
+        </button>
+
+        <!-- User Profile Capsule (Logged In) -->
+        <div class="user-profile-capsule" id="userProfileCapsule" tabindex="0">
+          <img src="" class="user-avatar-img" id="userNavAvatar" alt="User Avatar">
+          <span class="user-name-label" id="userNavName">Player</span>
+          <span style="font-size: 0.75rem;">&#9662;</span>
+
+          <div class="user-dropdown-menu" id="userDropdownMenu">
+            <div>
+              <div style="font-size: 0.95rem; font-weight: 700; color: #fff;" id="dropdownUserName">Player Name</div>
+              <div class="dropdown-user-email" id="dropdownUserEmail">player@gmail.com</div>
+            </div>
+            <div class="dropdown-ign-box">
+              <span class="dropdown-ign-label">Minecraft Username (IGN):</span>
+              <input type="text" class="dropdown-ign-input" id="dropdownIgnInput" placeholder="Enter MC Username..." value="Steve">
+            </div>
+            <div class="dropdown-whitelist-badge">
+              <span>● SMP Season 1: Whitelist Ready</span>
+            </div>
+            <button class="dropdown-logout-btn" id="dropdownLogoutBtn">Sign Out</button>
+          </div>
+        </div>
+
+        <!-- Direct Play Button -->
+        <a href="server.html" class="btn btn-purple btn-sm">
+          <span>Play Now &rarr;</span>
+        </a>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Mobile Menu">&#9776;</button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop"></div>
+  <aside class="mobile-drawer" id="mobileDrawer" aria-label="Mobile Navigation Drawer">
+    <div class="mobile-drawer-header">
+      <div class="brand-text-block">
+        <div class="brand-title">VYNTRIC</div>
+        <div class="brand-subtitle">MINECRAFT SMP</div>
+      </div>
+      <button class="drawer-close-btn" id="mobileDrawerCloseBtn" aria-label="Close menu">&times;</button>
+    </div>
+    <nav class="mobile-drawer-links">
+      <a href="index.html" class="mobile-drawer-link">Home</a>
+      <a href="about.html" class="mobile-drawer-link">About</a>
+      <a href="squad.html" class="mobile-drawer-link">Squad</a>
+      <a href="builds.html" class="mobile-drawer-link active">Builds</a>
+      <a href="server.html" class="mobile-drawer-link">Server IP</a>
+      <a href="faq.html" class="mobile-drawer-link">FAQ</a>
+      <a href="community.html" class="mobile-drawer-link">Community</a>
+    </nav>
+    <div class="mobile-drawer-footer">
+      <button class="btn btn-purple" id="drawerCopyIpBtn" style="width: 100%; justify-content: center;">
+        Copy play.vyntricbd.tech &#128203;
+      </button>
+      <a href="server.html" class="btn btn-cyan" style="width: 100%; justify-content: center;">
+        Connect to Realm &rarr;
+      </a>
+    </div>
+  </aside>
+  <main style="padding-top: 5rem; padding-bottom: 5rem;">
+    <section id="projects">
+      <div class="container">
+        
+        <div class="section-header reveal-elem">
+          <div class="section-eyebrow">
+            <span>🏰 Featured Architecture</span>
+          </div>
+          <h2 class="section-title">Monumental Survival Builds &amp; Gallery</h2>
+          <p class="section-desc">Explore our world’s floating island sanctums, subterranean biospheres, and high-stakes gladiatorial battlegrounds.</p>
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div class="filter-pills-row reveal-elem" id="buildsFilterRow">
+          <button class="filter-pill-btn active" data-filter="all">All Builds (6)</button>
+          <button class="filter-pill-btn" data-filter="base">Mega Bases</button>
+          <button class="filter-pill-btn" data-filter="pvp">PvP Arenas</button>
+          <button class="filter-pill-btn" data-filter="monument">Monuments</button>
+        </div>
+
+        <!-- Builds Grid -->
+        <div class="builds-grid reveal-elem" id="buildsGridContainer">
+          
+          <!-- Build 1 -->
+          <div class="glass-card build-card" data-category="base" data-title="The Floating Obsidian Sanctum" data-desc="A colossal obsidian and crying obsidian sanctuary hovering 120 blocks above the void, illuminated by purple starlight beacons and reinforced vaults." data-img="/assets/gallery/obsidian_void.jpg">
+            <div class="build-img-wrap">
+              <span class="build-tag-floating">Mega Base</span>
+              <img src="/assets/gallery/obsidian_void.jpg" alt="Floating Obsidian Sanctum" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'">
+            </div>
+            <div class="build-details">
+              <h4>The Floating Obsidian Sanctum</h4>
+              <p>Hovering 120 blocks above the void, equipped with beacon arrays and reinforced obsidian bastions.</p>
+              <div class="build-footer-row">
+                <span>📍 Spawn Void Perimeter</span>
+                <span>Inspect 🔍</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Build 2 -->
+          <div class="glass-card build-card" data-category="base" data-title="Lush Underground Biosphere" data-desc="A fully terraformed underground cavern with automated glowberry farms, moss district, and subterranean waterfalls sustaining 40+ players." data-img="/assets/gallery/lush_caves.jpg">
+            <div class="build-img-wrap">
+              <span class="build-tag-floating">Survival Empire</span>
+              <img src="/assets/gallery/lush_caves.jpg" alt="Lush Underground Biosphere" loading="lazy" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/9/97/Minecraft_-_Lush_caves.jpg'">
+            </div>
+            <div class="build-details">
+              <h4>Lush Underground Biosphere</h4>
+              <p>Self-sustaining subterranean mega-cavern featuring organic moss architecture and vertical harvests.</p>
+              <div class="build-footer-row">
+                <span>📍 Y: -24 Cavern District</span>
+                <span>Inspect 🔍</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Build 3 -->
+          <div class="glass-card build-card" data-category="monument" data-title="Deep Dark Ancient Citadel" data-desc="Secured Warden perimeter and reinforced deepslate fortress housing our master catalyst storage and silent vaults." data-img="/assets/gallery/deep_dark.png">
+            <div class="build-img-wrap">
+              <span class="build-tag-floating">Endgame Raid</span>
+              <img src="/assets/gallery/deep_dark.png" alt="Deep Dark Ancient Citadel" loading="lazy" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/0/02/Minecraft_-_Deep_Dark.png'">
+            </div>
+            <div class="build-details">
+              <h4>Deep Dark Ancient Citadel</h4>
+              <p>Reclaimed ancient city fortress engineered with wool silencers and automated sculk catalysts.</p>
+              <div class="build-footer-row">
+                <span>📍 Y: -52 Deepslate Sector</span>
+                <span>Inspect 🔍</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Build 4 -->
+          <div class="glass-card build-card" data-category="pvp" data-title="Imperial PvP Combat Arena" data-desc="High-stakes gladiatorial colosseum engineered for ranked 1v1 sword duels, crystal combat, and spectator scrimmages." data-img="/assets/gallery/esports_arena.jpg">
+            <div class="build-img-wrap">
+              <span class="build-tag-floating">PvP Arena</span>
+              <img src="/assets/gallery/esports_arena.jpg" alt="Imperial PvP Combat Arena" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80'">
+            </div>
+            <div class="build-details">
+              <h4>Imperial PvP Combat Arena</h4>
+              <p>Engineered with blast-resistant obsidian floors, spectator balconies, and instantaneous duel respawns.</p>
+              <div class="build-footer-row">
+                <span>📍 Arena Realm Hub</span>
+                <span>Inspect 🔍</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Build 5 -->
+          <div class="glass-card build-card" data-category="monument" data-title="Celestial Aurora Spire" data-desc="Reaching world height limit at Y=319, an astronomical tower with crystal glass rings overlooking snowy mountain peaks." data-img="/assets/gallery/aurora_night.jpg">
+            <div class="build-img-wrap">
+              <span class="build-tag-floating">Monument</span>
+              <img src="/assets/gallery/aurora_night.jpg" alt="Celestial Aurora Spire" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80'">
+            </div>
+            <div class="build-details">
+              <h4>Celestial Aurora Spire</h4>
+              <p>Perched atop the highest peaks at Y: 319, serving as our primary Elytra launchpad and starry observatory.</p>
+              <div class="build-footer-row">
+                <span>📍 Y: 319 Sky Summit</span>
+                <span>Inspect 🔍</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Build 6 -->
+          <div class="glass-card build-card" data-category="base" data-title="Official Trails &amp; Tales Nexus" data-desc="The central nexus welcoming travelers from across Java & Bedrock with portals to all district hubs." data-img="/assets/gallery/minecraft_keyart.png">
+            <div class="build-img-wrap">
+              <span class="build-tag-floating">Spawn Nexus</span>
+              <img src="/assets/gallery/minecraft_keyart.png" alt="Official Trails &amp; Tales Nexus" loading="lazy" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/3/37/Minecraft_Key-art.png'">
+            </div>
+            <div class="build-details">
+              <h4>Official Trails &amp; Tales Nexus</h4>
+              <p>The grand central hub connecting players to nether highways, shopping districts, and communal farms.</p>
+              <div class="build-footer-row">
+                <span>📍 Coordinates 0, 0</span>
+                <span>Inspect 🔍</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  </main>
+  <!-- ==========================================================================
+     GLOBAL SITE FOOTER
+     ========================================================================== -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-top-row">
+        <div class="footer-brand-col">
+          <div class="footer-logo-row">
+            <div class="brand-mark-box" style="width: 36px; height: 36px;">
+              <img src="/assets/vyntric_mark_cropped.png" alt="Vyntric" onerror="this.onerror=null;this.src='/assets/vyntric_mark.png'">
+            </div>
+            <span class="brand-name" style="font-size: 1.15rem;">VYNTRIC</span>
+          </div>
+          <p class="footer-bio">
+            Vyntric is an elite Minecraft SMP and competitive gaming community. Pure vanilla+ survival, monumental mega-bases, automated economy, and zero pay-to-win.
+          </p>
+        </div>
+
+        <div class="footer-cols-wrap">
+          <div class="footer-links-col">
+            <div class="footer-heading">NAVIGATION</div>
+            <a href="index.html" class="footer-link">Home</a>
+            <a href="about.html" class="footer-link">About Origin</a>
+            <a href="squad.html" class="footer-link">Vyntric Squad</a>
+            <a href="builds.html" class="footer-link">Builds Gallery</a>
+          </div>
+
+          <div class="footer-links-col">
+            <div class="footer-heading">MINECRAFT SERVER</div>
+            <a href="server.html" class="footer-link">Server IP &amp; Port</a>
+            <a href="server.html" class="footer-link">Java &amp; Bedrock Guide</a>
+            <a href="faq.html" class="footer-link">Server FAQ</a>
+            <a href="community.html" class="footer-link">Discord Community</a>
+          </div>
+
+          <div class="footer-links-col">
+            <div class="footer-heading">DIRECT SERVER IP</div>
+            <div class="footer-ip-capsule">
+              <code>play.vyntricbd.tech</code>
+              <button class="footer-copy-btn" id="footerCopyIpBtn" aria-label="Copy server IP">Copy</button>
+            </div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.45rem;">
+              Java 1.21+ &bull; Bedrock Port: 19132
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <div>&copy; 2026 Vyntric Community. Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft.</div>
+        <div class="footer-social-links">
+          <a href="https://discord.gg/vyntric" class="footer-social-icon" target="_blank" rel="noopener">Discord</a>
+          <a href="server.html" class="footer-social-icon">Status</a>
+          <a href="faq.html" class="footer-social-icon">Rules</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+     MEMBER SIGN IN MODAL (1:1 PIXEL-PERFECT SPEC)
+     ========================================================================== -->
+  <div class="auth-modal" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="auth-card" id="authCard">
+      <button class="auth-close-btn" id="authCloseBtn" aria-label="Close modal">&times;</button>
+      
+      <div class="auth-crest-wrap">
+        <div class="auth-crest-box">
+          <img src="/assets/vyntric_mark_cropped.png" alt="Vyntric Crest" onerror="this.onerror=null;this.src='/assets/vyntric_mark.png'">
+        </div>
+      </div>
+
+      <div class="auth-eyebrow">VYNTRIC ACCOUNT</div>
+      <h3 class="auth-title" id="authTitle">Member Sign In</h3>
+      <p class="auth-desc">Continue with Google (Gmail) or sign in with your username and password.</p>
+
+      <button class="google-auth-btn" id="modalGoogleBtn" aria-label="Continue with Google">
+        <svg class="google-icon-svg" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span>Continue with Google</span>
+      </button>
+
+      <div class="auth-divider">
+        <span>OR WITH CREDENTIALS</span>
+      </div>
+
+      <div class="auth-tabs-row">
+        <button class="auth-tab active" id="tabSignIn">Sign In</button>
+        <button class="auth-tab" id="tabSignUp">Create Account</button>
+      </div>
+
+      <form id="authForm" onsubmit="return false;">
+        <div class="auth-field-group">
+          <label class="auth-label" for="authUsernameInput">USERNAME OR EMAIL <span style="color: #ef4444;">*</span></label>
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">&#128100;</span>
+            <input type="text" class="auth-input" id="authUsernameInput" placeholder="VyntricPlayer or name@gmail.com" required autocomplete="off" value="">
+          </div>
+        </div>
+
+        <div class="auth-field-group">
+          <label class="auth-label" for="authPasswordInput">PASSWORD <span style="color: #ef4444;">*</span></label>
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">&#128274;</span>
+            <input type="password" class="auth-input" id="authPasswordInput" placeholder="Enter your password" required autocomplete="new-password" value="">
+            <button type="button" class="password-eye-btn" id="passwordEyeBtn" aria-label="Toggle password visibility">&#128065;</button>
+          </div>
+        </div>
+
+        <button type="submit" class="auth-submit-btn" id="authSubmitBtn">
+          Sign In &rarr;
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-notification" id="toast"></div>
+
+  <!-- Central JavaScript -->
+  <script src="/js/main.js"></script>
+</body>
+</html>
