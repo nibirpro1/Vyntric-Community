@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Vyntric — Official Minecraft SMP & Competitive Community",
   "scripts": {
+    "build": "echo 'Static files ready for Vyntric deployment'",
     "start": "node server.js"
   }
 }

@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const DIR = 'd:\\Vyntric Community';
+const DIR = __dirname;
 const PORTS = [3000, 8080];
 
 const MIME_TYPES = {
